@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+	"text/template"
 
 	"github.com/gowebprogramming/chapter2/data"
 )
@@ -78,7 +80,25 @@ func danger(args ...interface{}) {
 // this utility was meant for redirect to the appropiate page
 // the user based on an error, providing a message
 func error_message(w http.ResponseWriter, r *http.Request, message string) {
-	// TODO: don't really understand why the strings are concatenated in this way 
+	// TODO: don't really understand why the strings are concatenated in this way
 	url := []string{"/err?msg=", message}
 	http.Redirect(w, r, strings.Join(url, ""), 302)
+}
+
+func generateHtml(w http.ResponseWriter, data interface{}, filenames ...string) {
+	var files []string
+	for _, filename := range filenames {
+		// appending the address of every file on the files slice
+		files = append(files, fmt.Sprintf("templates/%s", filename))
+	}
+
+	// ParseFiles, will convert those plain files on templates
+	// that will be validated by Must method
+	templates := template.Must(template.ParseFiles(files...))
+	// then the templates will be executed with the data provided
+	// you cn see that the data can be opened to receive an interface
+	// thats because the template can require a set of multiple kinds of data
+	// is up to you if you send the correct one based on the filenames that
+	// you send to this function
+	templates.ExecuteTemplate(w, "layout", data)
 }
