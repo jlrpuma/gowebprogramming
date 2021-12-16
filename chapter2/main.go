@@ -15,5 +15,5 @@ func main() {
 	// search for <application root>/{folderRequired}/{fileRequired}
 	mux.Handle("/static/", http.StripPrefix("/static/", files))
 
-	mux.Handle("/authenticate", authenticate)
+	mux.HandleFunc("/authenticate", authenticate)
 }

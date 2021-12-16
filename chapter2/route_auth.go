@@ -1,10 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/gopatterns/github.com/gowebprogramming/chapter2/data"
+	"github.com/gowebprogramming/chapter2/data"
 )
 
 // POST /authenticate
@@ -24,5 +23,26 @@ func authenticate(w http.ResponseWriter, r *http.Request) {
 		// usage of utility to log danger issues
 		danger(err, "Cannot find user")
 	}
-	fmt.Println(user)
+	// just a simple valiudation of the password that was queried
+	// and the password received in the request (but encrypted)
+	if user.Password == data.Encrypt(r.PostFormValue("password")) {
+		session, err := user.CreateSession()
+		if err != nil {
+			danger(err, "Cannot create session")
+		}
+
+		cookie := http.Cookie{
+			Name:     "_cookie",
+			Value:    session.Uuid,
+			HttpOnly: true, // TODO: what does it means? Https is excluded or something?
+		}
+		// The cookie is being setted on the responseWriter
+		http.SetCookie(w, &cookie)
+		// Looks like this redirection cause a redirection on the browser to this page
+		// this is interesting because you void the need of that redirection at frontend level
+		// after a login is completer... (interesting)
+		http.Redirect(w, r, "/", 302)
+	} else {
+		http.Redirect(w, r, "login", 302)
+	}
 }
