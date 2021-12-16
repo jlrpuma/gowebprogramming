@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gowebprogramming/chapter2/data"
 )
@@ -50,7 +51,7 @@ func loadConfig() {
 
 }
 
-func session(w http.ResponseWriter, r *http.Request) (sess data.Session) {
+func session(w http.ResponseWriter, r *http.Request) (sess data.Session, err error) {
 	// we try to get the cookie that can be stored on the request
 	cookie, err := r.Cookie("_cookie")
 	// if the cookie is found
@@ -72,4 +73,12 @@ func session(w http.ResponseWriter, r *http.Request) (sess data.Session) {
 func danger(args ...interface{}) {
 	logger.SetPrefix("ERROR")
 	logger.Println(args...)
+}
+
+// this utility was meant for redirect to the appropiate page
+// the user based on an error, providing a message
+func error_message(w http.ResponseWriter, r *http.Request, message string) {
+	// TODO: don't really understand why the strings are concatenated in this way 
+	url := []string{"/err?msg=", message}
+	http.Redirect(w, r, strings.Join(url, ""), 302)
 }
