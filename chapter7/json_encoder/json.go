@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 )
 
 type Post struct {
@@ -43,15 +43,19 @@ func main() {
 			}},
 	}
 
-	jsonContent, err := json.Marshal(post)
+	jsonFile, err := os.Create("post.json")
 	if err != nil {
-		fmt.Println("Error on marshall", err)
-		return 
-	}
-	err = ioutil.WriteFile("post.json", jsonContent, 0644)
-	if err != nil {
-		fmt.Println()
+		fmt.Println("Error creating file", err)
 		return
 	}
-
+	// Creating a New encoder
+	encoder := json.NewEncoder(jsonFile)
+	// encode the info that is stored on post
+	// passing by reference
+	err = encoder.Encode(&post)
+	// handling err on Encoding
+	if err != nil {
+		fmt.Println("Error encoding", err)
+		return
+	}
 }
