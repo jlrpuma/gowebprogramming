@@ -1,6 +1,8 @@
 package data
 
-import "time"
+import (
+	"time"
+)
 
 // user struct created to handle the information that gets queried
 type User struct {
@@ -57,5 +59,26 @@ func (user *User) CreateSession() (session Session, err error) {
 	// this execution gets a response that can be extracted with the scan Method
 	err = stmt.QueryRow(createUUID(), user.Email, user.Id, time.Now()).
 		Scan(&session.Id, &session.Email, &session.Id, &session.CreatedAt)
+	return
+}
+
+// this code is self documented, (check if is a valid session)
+func (session *Session) Check() (valid bool, err error) {
+	// this is so so so cool, you can or get the error
+	// or the error can be nil and your session param
+	// gets hydrated by the Scan method using the & that
+	// is dereferencing the session pointer
+	// Kill two birds with one LINE (great)
+	err = Db.QueryRow("SELECT id, uuid, email, user_id, created_at FROM sessions WHERE uuid = $1", session.Uuid).
+		Scan(&session.Id, &session.Uuid, &session.Email, &session.CreatedAt)
+	// if you get an error, the session is invalid
+	if err != nil {
+		valid = false
+		return
+	}
+	// if the session id is diferent to 0, the session is valid
+	if session.Id != 0 {
+		valid = true
+	}
 	return
 }

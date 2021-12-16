@@ -2,8 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
+	"net/http"
 	"os"
+
+	"github.com/gowebprogramming/chapter2/data"
 )
 
 type Configuration struct {
@@ -46,9 +50,25 @@ func loadConfig() {
 
 }
 
+func session(w http.ResponseWriter, r *http.Request) (sess data.Session) {
+	// we try to get the cookie that can be stored on the request
+	cookie, err := r.Cookie("_cookie")
+	// if the cookie is found
+	if err == nil {
+		// creating a session based on the Value that the cookie has stored
+		// remember that value is the Uuid that we put on the authentication
+		// handler
+		sess = data.Session{Uuid: cookie.Value}
+		//
+		if ok, _ := sess.Check(); !ok {
+			err = errors.New("Invalid session")
+		}
+	}
+	return
+}
 
 // danger allows us to use the logger in a more centralized way
-// using our utils file to log any classified danger issue. 
+// using our utils file to log any classified danger issue.
 func danger(args ...interface{}) {
 	logger.SetPrefix("ERROR")
 	logger.Println(args...)
