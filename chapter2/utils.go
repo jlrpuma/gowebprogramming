@@ -45,3 +45,11 @@ func loadConfig() {
 	}
 
 }
+
+
+// danger allows us to use the logger in a more centralized way
+// using our utils file to log any classified danger issue. 
+func danger(args ...interface{}) {
+	logger.SetPrefix("ERROR")
+	logger.Println(args...)
+}

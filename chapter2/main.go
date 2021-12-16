@@ -14,4 +14,6 @@ func main() {
 	// StripPrefix removes the _static_ part of the url and will
 	// search for <application root>/{folderRequired}/{fileRequired}
 	mux.Handle("/static/", http.StripPrefix("/static/", files))
+
+	mux.Handle("/authenticate", authenticate)
 }
