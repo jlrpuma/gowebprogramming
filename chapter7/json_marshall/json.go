@@ -1,0 +1,1 @@
+{"id":1,"content":"Hello Go","author":{"id":1,"name":"Jose"},"comments":[{"id":1,"content":"Hello Jose","author":""},{"id":2,"content":"hau?","author":""}]}
