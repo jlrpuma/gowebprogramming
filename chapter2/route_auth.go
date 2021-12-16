@@ -31,10 +31,15 @@ func authenticate(w http.ResponseWriter, r *http.Request) {
 			danger(err, "Cannot create session")
 		}
 
+		// HttpOnly true allow Http or Https to access the cookie 
+		// and no other non HTTP APIs like Javascript
+
+		// expire attribute is not being setted because
+		// this cookie will be a session cookie
 		cookie := http.Cookie{
 			Name:     "_cookie",
 			Value:    session.Uuid,
-			HttpOnly: true, // TODO: what does it means? Https is excluded or something?
+			HttpOnly: true, 
 		}
 		// The cookie is being setted on the responseWriter
 		http.SetCookie(w, &cookie)
