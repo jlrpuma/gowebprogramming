@@ -68,3 +68,26 @@ func handleGet(w http.ResponseWriter, r *http.Request) (err error) {
 	w.Write(output)
 	return
 }
+
+func handlePost(w http.ResponseWriter, r *http.Request) (err error) {
+	len := r.ContentLength
+	// creating an slice with an specified len
+	body := make([]byte, len)
+	// TODO: interesting way to get the body information
+	r.Body.Read(body)
+
+	// creating a post
+	var post Post
+	// to pass the Json information
+	json.Unmarshal(body, &post)
+	// post creation method is being executed
+	err = post.create()
+	if err != nil {
+		return
+	}
+	// at this POST case the only information that the server transport
+	// to the client is the 200 HTTP code, that says that everything goes ok
+	// with tjhe request, howeverm a 201 could be used to right ?
+	w.WriteHeader(200)
+	return
+}
