@@ -136,8 +136,8 @@ func handleDelete(w http.ResponseWriter, r *http.Request) (err error) {
 		return
 	}
 	// TODO: is this really neded ?
-	// I just can use the id to pass that to the function
-	// that delete the post based on the id
+	// Is needed because if the id doesn't exist 
+	// the delete is not going to be successful
 	post, err := retrieve(id)
 	if err != nil {
 		return
