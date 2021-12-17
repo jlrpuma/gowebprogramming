@@ -49,3 +49,7 @@ func (post *Post) create() (err error) {
 	}
 	return
 }
+
+func (pot *Post) update() (err error) {
+
+}

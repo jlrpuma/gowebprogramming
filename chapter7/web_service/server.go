@@ -91,3 +91,40 @@ func handlePost(w http.ResponseWriter, r *http.Request) (err error) {
 	w.WriteHeader(200)
 	return
 }
+
+func handlePut(w http.ResponseWriter, r *http.Request) (err error) {
+	// get the resource id that wants to be updated
+	id, err := strconv.Atoi(path.Base(r.URL.Path))
+	if err != nil {
+		return
+	}
+	// retrieve the post by the id required
+	post, err := retrieve(id)
+	if err != nil {
+		return
+	}
+
+	// extract the body content
+	len := r.ContentLength
+	// creating an slice with the size required for store the
+	// body content
+	body := make([]byte, len)
+	// reading the Request Body and fill the body slice
+	r.Body.Read(body)
+
+	// TODO, this means that i can pass the id on the body
+	// and i will be changing the id of the post, or even worst
+	// i will be modifiying another post content...
+	json.Unmarshal(body, &post)
+
+	// using the update post method
+	err = post.update()
+	if err != nil {
+		return
+	}
+
+	// The client just needs a confirmation that everything goes ok
+	// so we put the status 200
+	w.WriteHeader(200)
+	return
+}
