@@ -128,3 +128,24 @@ func handlePut(w http.ResponseWriter, r *http.Request) (err error) {
 	w.WriteHeader(200)
 	return
 }
+
+func handleDelete(w http.ResponseWriter, r *http.Request) (err error) {
+	// getting the resource id of the post that wants to be deleted
+	id, err := strconv.Atoi(path.Base(r.URL.Path))
+	if err != nil {
+		return
+	}
+	// TODO: is this really neded ?
+	// I just can use the id to pass that to the function
+	// that delete the post based on the id
+	post, err := retrieve(id)
+	if err != nil {
+		return
+	}
+	err = post.delete()
+	if err != nil {
+		return
+	}
+	w.WriteHeader(200)
+	return
+}
